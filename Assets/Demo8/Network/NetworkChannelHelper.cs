@@ -124,22 +124,57 @@ namespace StarForce
                 return false;
             }
 
-            /* 以下内容为木头本人做的改动,不知道是否有错误的地方(虽然它运行起来是正确的),希望大家能帮忙指正 */
-            // 因为头部消息有8字节长度，所以先跳过8字节
-            destination.Position = 8;
+            // destination 是一个字节流 position 是游标位置
+            // 我们的消息格式
+            // i2 2个字节的消息总长度
+            // i4 4个字节的checkcode
+            // i4 4个字节的cmd -> code
+            // 所以按照下面的示例  我们先要跳过 10字节
+
+            // 先序列化消息内容
+            destination.Position = 10;
             Serializer.SerializeWithLengthPrefix(destination, packet, PrefixStyle.Fixed32);
 
-            // 头部消息
-            CSPacketHeader packetHeader = ReferencePool.Acquire<CSPacketHeader>();
-            packetHeader.Id = packet.Id;
-            packetHeader.PacketLength = (int)destination.Length - 8; // 消息内容长度需要减去头部消息长度
+            //我们不需要 包头 id  全部自动组装
 
+            //首先写入总长度
+            var len = 4 + 4 + destination.Length;
             destination.Position = 0;
-            Serializer.SerializeWithLengthPrefix(destination, packetHeader, PrefixStyle.Fixed32);
+            Serializer.SerializeWithLengthPrefix(destination, len, PrefixStyle.Fixed32);
 
-            ReferencePool.Release(packetHeader);
+            //然后写入checkcode 目前为1234
+            var checkcode = 1234;
+            destination.Position = 2;
+            Serializer.SerializeWithLengthPrefix(destination, checkcode, PrefixStyle.Fixed32);
 
-            return true;
+            //最后写入cmd   cmd由crc32 转换协议名得到
+            //TODO: crc32
+            var cmd = 111111;
+            destination.Position = 6;
+            Serializer.SerializeWithLengthPrefix(destination, checkcode, PrefixStyle.Fixed32);
+
+            //协议组装完毕 发送即可
+
+
+
+
+
+            /* 以下内容为木头本人做的改动,不知道是否有错误的地方(虽然它运行起来是正确的),希望大家能帮忙指正 */
+            // 因为头部消息有8字节长度，所以先跳过8字节
+            // destination.Position = 8;
+            // Serializer.SerializeWithLengthPrefix(destination, packet, PrefixStyle.Fixed32);
+
+            // 头部消息
+            // CSPacketHeader packetHeader = ReferencePool.Acquire<CSPacketHeader>();
+            // packetHeader.Id = packet.Id;
+            // packetHeader.PacketLength = (int)destination.Length - 8; // 消息内容长度需要减去头部消息长度
+
+            // destination.Position = 0;
+            // Serializer.SerializeWithLengthPrefix(destination, packetHeader, PrefixStyle.Fixed32);
+
+            // ReferencePool.Release(packetHeader);
+
+            // return true;
         }
 
         /// <summary>
