@@ -8,10 +8,22 @@ using GameFramework.Network;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using UnityGameFramework.Runtime;
+using System.Runtime.InteropServices;
 
 namespace StarForce
 {
+
+    internal static class crc32
+    {
+        [DLLImport("crc32.so")]
+        internal static extern void _make_crc32_table();
+
+        [DLLImport("crc32.so")]
+        internal static extern uint make_crc(uint crc, string str, uint length);
+    }
+
     public class NetworkChannelHelper : INetworkChannelHelper
+
     {
         private readonly Dictionary<int, Type> m_ServerToClientPacketTypes = new Dictionary<int, Type>();
         private INetworkChannel m_NetworkChannel = null;
