@@ -22,7 +22,7 @@ public class Demo8_ProcedureLaunch : ProcedureBase {
 		base.OnEnter (procedureOwner);
 
 		// 启动服务器(服务端的代码随便找随便改的，大家可以忽略，假设有个服务端就行了)
-		Demo8_SocketServer.Start ();
+		//Demo8_SocketServer.Start ();
 
 		// 获取框架事件组件
 		EventComponent Event
@@ -39,7 +39,7 @@ public class Demo8_ProcedureLaunch : ProcedureBase {
 		m_Channel = Network.CreateNetworkChannel ("testName", m_NetworkChannelHelper);
 
 		// 连接服务器
-		m_Channel.Connect (IPAddress.Parse ("127.0.0.1"), 8098);
+		m_Channel.Connect (IPAddress.Parse ("192.168.101.187"), 11798);
 	}
 
 	protected override void OnUpdate (ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds) {
@@ -58,9 +58,12 @@ public class Demo8_ProcedureLaunch : ProcedureBase {
 	private void OnConnected (object sender, GameEventArgs e) {
 		NetworkConnectedEventArgs ne = (NetworkConnectedEventArgs) e;
 
+		Debug.Log("链接成功 发送消息");
 		// 发送消息给服务端
-		m_Channel.Send (new CSHello () {
-			Name = "服务器你好吗？",
+		m_Channel.Send (new CSLogin () {
+			account = "robot_test",
+			password = "1111",
+			sdkid = 1,
 		});
 	}
 }
