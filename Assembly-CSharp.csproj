@@ -96,6 +96,7 @@
      <Compile Include="Assets/Demo10/Demo10_HeroWalkState.cs" />
      <Compile Include="Assets/DemoStarForce/UI/DemoSF_MenuFormLogic.cs" />
      <Compile Include="Assets/Demo2/Demo2_ProcedureMenu.cs" />
+     <Compile Include="Assets/Demo8/Network/Hash.cs" />
      <None Include="Assets/GameFramework/Configs/AssetBundleCollection.xml" />
      <None Include="Assets/GameFramework/Libraries/link.xml" />
      <None Include="Assets/GameFramework/Libraries/GameFramework.xml" />

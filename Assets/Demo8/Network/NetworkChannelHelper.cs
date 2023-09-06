@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using GameFramework;
 using GameFramework.Event;
@@ -16,13 +17,24 @@ using UnityEngine;
 namespace StarForce
 {
     
+    
     public class NetworkChannelHelper : INetworkChannelHelper
-
     {
         private static System.Text.ASCIIEncoding asciiEncoding = new ASCIIEncoding();
         
         private readonly Dictionary<int, Type> m_ServerToClientPacketTypes = new Dictionary<int, Type>();
         private INetworkChannel m_NetworkChannel = null;
+        
+        public static UInt32 CRC32HexToInt32(string crc32Hex)
+        {
+            // 去除可能包含的连字符（-）
+            crc32Hex = crc32Hex.Replace("-", "");
+
+            // 将16进制字符串转换为int32
+            UInt32 crc32Int = Convert.ToUInt32(crc32Hex, 16);
+
+            return crc32Int;
+        }
 
         /// <summary>
         /// 获取消息包头长度。
@@ -87,7 +99,7 @@ namespace StarForce
         }
 
         /// <summary>
-        /// 关闭并清理网络频道辅助器。
+        /// 关闭并清理网络频道辅助器。   
         /// </summary>
         public void Shutdown ()
         {
@@ -141,7 +153,7 @@ namespace StarForce
             // i4 4个字节的cmd -> code
             // n个字节的包体 
             //************************************
-
+            Debug.Log(Hash.CRC32("login.login_req"));
             
             //先序列化包体 包体序列化直接是大端的（不知道为啥）
             destination.Position = 10;
@@ -164,7 +176,8 @@ namespace StarForce
             
             //写入cmd  这个cmd是通过crc32计算得到
             //eg:  2432403469 = crc32(login.login_req)
-            UInt32 cmd = 2432403469;
+            var CMD = Hash.CRC32("login.login_req");
+            UInt32 cmd = CRC32HexToInt32(CMD);
             destination.Position = 6;
             bytes = BitConverter.GetBytes(cmd);
             Array.Reverse(bytes); 
