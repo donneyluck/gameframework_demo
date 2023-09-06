@@ -125,8 +125,7 @@ public class CSLogin : CSPacketBase
     public override int Id {
         get
         {
-            var cmd = int.Parse(Hash.CRC32("login.login_req"));
-            return cmd;
+            return 9;
         }
     }
     
@@ -137,7 +136,7 @@ public class CSLogin : CSPacketBase
     public string password;
 
     [ProtoMember (3)]
-    public int sdkid;
+    public Int32 sdkid;
 
     public override void Clear () {
 

@@ -61,8 +61,8 @@ public class Demo8_ProcedureLaunch : ProcedureBase {
 		Debug.Log("链接成功 发送消息");
 		// 发送消息给服务端
 		m_Channel.Send (new CSLogin () {
-			account = "robot_test",
-			password = "1111",
+			account = "robot1",
+			password = "111111",
 			sdkid = 1,
 		});
 	}
